@@ -23,6 +23,8 @@ services:
       - "12345:80"
     depends_on:
       - postgres
+    networks:
+      - my-network    
 
   cadastropalestrantes:
     image: cadastropalestrantes

@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"strings"
 )
 
 func ExibeTodosPalestrantes(c *gin.Context) {
@@ -21,8 +23,30 @@ func CriaNovoPalestrante(c *gin.Context) {
 		return
 	}
 
-	database.DB.Create(&palestrante)
-	c.JSON(200, palestrante)
+	CPF := palestrante.CPF
+	RG := palestrante.RG
+	NOME := palestrante.Nome
+	havestringCPF := strings.ContainsAny(CPF, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	havestringRG := strings.ContainsAny(RG, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	havenumber := strings.ContainsAny(NOME, "0123456789")
+
+	if palestrante.CPF == "" || palestrante.Nome == "" || palestrante.RG == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados incompletos"})
+		return
+	}
+	if havestringCPF {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro CPF deve ser número obrigatoriamente!"})
+		return
+	}else if havestringRG {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro RG deve ser número obrigatoriamente!"})
+		return
+	}else if havenumber {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro nome só pode possuir caracteres, Números não são aceitos!"})
+		return
+	}else {
+		database.DB.Create(&palestrante)
+		c.JSON(200, palestrante)
+	}
 }
  
 func ExibePalestrantPorID(c *gin.Context) {
@@ -35,6 +59,8 @@ func ExibePalestrantPorID(c *gin.Context) {
 		return
 	}
 
+	
+
 	c.JSON(200, palestrante)
 
 }
@@ -42,14 +68,16 @@ func ExibePalestrantPorID(c *gin.Context) {
 func DeletaPalestrante(c *gin.Context) {
 	var palestrante models.Palestrante
 	id := c.Params.ByName("id")
-	database.DB.Delete(&palestrante, id)
-
-	if palestrante.ID == 0 {
+	havestring := strings.ContainsAny(id, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	
+	if havestring {
 		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
 		return
+	} else {
+		c.JSON(200, gin.H{"message": "Palestrante deletado com sucesso"})
+		database.DB.Delete(&palestrante, id)
 	}
-
-	c.JSON(200, gin.H{"data": "Palestrante deletado com sucesso"})
+	
 }
 
 
@@ -57,11 +85,17 @@ func BuscaPalestrantePorCPF(c *gin.Context) {
 	var palestrante models.Palestrante
 
 	cpf := c.Param("cpf")
+	havestring := strings.ContainsAny(cpf, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
 	database.DB.Where(&models.Palestrante{CPF: cpf}).First(&palestrante)
 
 	if palestrante.ID == 0 {
 		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
 		return
+	} else if havestring {
+		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
+		return
+	} else {
+		c.JSON(200, palestrante)
 	}
-	c.JSON(200, palestrante)
+	
 }
