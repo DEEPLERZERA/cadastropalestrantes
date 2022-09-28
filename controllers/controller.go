@@ -23,12 +23,9 @@ func CriaNovoPalestrante(c *gin.Context) {
 		return
 	}
 
-	CPF := palestrante.CPF
-	RG := palestrante.RG
-	NOME := palestrante.Nome
-	havestringCPF := strings.ContainsAny(CPF, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
-	havestringRG := strings.ContainsAny(RG, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
-	havenumber := strings.ContainsAny(NOME, "0123456789")
+	havestringCPF := strings.ContainsAny(palestrante.CPF, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	havestringRG := strings.ContainsAny(palestrante.RG, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	havenumber := strings.ContainsAny(palestrante.Nome, "0123456789")
 
 	if palestrante.CPF == "" || palestrante.Nome == "" || palestrante.RG == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados incompletos"})
@@ -71,7 +68,7 @@ func DeletaPalestrante(c *gin.Context) {
 	havestring := strings.ContainsAny(id, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
 	
 	if havestring {
-		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
+		c.JSON(404, gin.H{"error": "ID deve ser número obrigatoriamente!"})
 		return
 	} else {
 		c.JSON(200, gin.H{"message": "Palestrante deletado com sucesso"})
@@ -91,8 +88,10 @@ func BuscaPalestrantePorCPF(c *gin.Context) {
 	if palestrante.ID == 0 {
 		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
 		return
-	} else if havestring {
-		c.JSON(404, gin.H{"error": "Palestrante não encontrado"})
+	} 
+	
+	if havestring {
+		c.JSON(404, gin.H{"error": "CPF deve ser número obrigatoriamente!"})
 		return
 	} else {
 		c.JSON(200, palestrante)
