@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cadastropalestrantes/database"
-	"cadastropalestrantes/routes"
+	"CadastroPalestrantes/database"
+	"CadastroPalestrantes/routes"
 )
 
 

@@ -1,4 +1,4 @@
-module cadastropalestrantes
+module CadastroPalestrantes
 
 go 1.18
 

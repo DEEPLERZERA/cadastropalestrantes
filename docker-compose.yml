@@ -24,8 +24,8 @@ services:
     depends_on:
       - postgres
 
-  cadastropalestrante:
-    image: cadastropalestrante
+  cadastropalestrantes:
+    image: cadastropalestrantes
     ports:
       - "8080:8080"
     depends_on:

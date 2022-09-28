@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"cadastropalestrantes/controllers"
+	"CadastroPalestrantes/controllers"
 
 	"github.com/gin-gonic/gin"
 

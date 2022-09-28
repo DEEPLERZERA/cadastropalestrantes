@@ -1,8 +1,8 @@
 package controllers 
 
 import (
-	"cadastropalestrantes/database"
-	"cadastropalestrantes/models"
+	"CadastroPalestrantes/database"
+	"CadastroPalestrantes/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,13 +20,6 @@ func CriaNovoPalestrante(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if database.DB.Where(&models.Palestrante{CPF: palestrante.CPF}).First(&palestrante) != nil {
-		c.JSON(400, gin.H{"error": "CPF já cadastrado"})
-		return
-	} 
-		
-
 
 	database.DB.Create(&palestrante)
 	c.JSON(200, palestrante)
