@@ -4,10 +4,13 @@ import (
 	"CadastroPalestrantes/database"
 	"CadastroPalestrantes/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	"strings"
+
 )
 
 func ExibeTodosPalestrantes(c *gin.Context) {
@@ -89,9 +92,23 @@ func ExibePalestrantPorID(c *gin.Context) {
 func DeletaPalestrante(c *gin.Context) {
 	var palestrante models.Palestrante
 	id := c.Params.ByName("id")
+
 	havestring := strings.ContainsAny(id, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_+*/!@#$%¨&*()_+}{^~´`][}{><,.;:?/|")
+	iduint64, err:= strconv.ParseUint(id, 10, 32) 
+	iduint := uint(iduint64)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "Erro ao deletar"})
+		return
+	}
+	idexists  := database.DB.Where(gorm.Model{ID: iduint}).First(&palestrante)  //Pode usar pra verificar id
 
 	
+
+	if idexists.RowsAffected == 0 {
+		c.JSON(404, gin.H{"error": "ID não encontrado"})
+		return
+	}
+
 	if havestring {
 		c.JSON(404, gin.H{"error": "ID deve ser número obrigatoriamente!"})
 		return
